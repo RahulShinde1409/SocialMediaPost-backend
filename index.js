@@ -1,9 +1,10 @@
 import dotenv from 'dotenv'
 dotenv.config();
+import cors from "cors";
 import express from "express";
 // import session from 'express-session';
 import mongoose from "mongoose";
-import cors from "cors";
+
 
 
 
@@ -24,7 +25,7 @@ app.use('/static', express.static('uploads'))
 //     origin:"http://localhost:5173",credentials:true,
 // }))
 
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors({ origin: "*", credentials: true }));g
 
 //to pass body data
 app.use(express.json())
