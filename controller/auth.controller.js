@@ -53,56 +53,56 @@ export const Register = async (req, res) => {
 }
 
 
-export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+// export const login = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
 
-    const existingUser = await userModel.findOne({ email });
-    if (!existingUser) {
-      return res.status(400).json({
-        message: "User doesn't exist!",
-        success: false
-      });
-    }
+//     const existingUser = await userModel.findOne({ email });
+//     if (!existingUser) {
+//       return res.status(400).json({
+//         message: "User doesn't exist!",
+//         success: false
+//       });
+//     }
 
-    const checkPassword = bcrypt.compareSync(password, existingUser.password);
-    const { password: _, ...user } = existingUser.toObject();
+//     const checkPassword = bcrypt.compareSync(password, existingUser.password);
+//     const { password: _, ...user } = existingUser.toObject();
 
-    const posts = await postModel.find({ user_id: existingUser._id });
+//     const posts = await postModel.find({ user_id: existingUser._id });
 
-    if (checkPassword) {
-       if (!existingUser.role) {
-        existingUser.role = "user";
-        await existingUser.save();
-        user.role = "user"; 
-      }
+//     if (checkPassword) {
+//        if (!existingUser.role) {
+//         existingUser.role = "user";
+//         await existingUser.save();
+//         user.role = "user"; 
+//       }
 
-      const token = jwt.sign(
-        { data: { id: existingUser._id,role: existingUser.role } },
-        process.env.TOKEN_SECRET_KEY,
-        { expiresIn: '1d' }
-      );
-      return res.status(200).json({
-        data: user,
-        token,
-        message: "Successfully login!",
-        success: true,
-        posts
-      });
-    }
+//       const token = jwt.sign(
+//         { data: { id: existingUser._id,role: existingUser.role } },
+//         process.env.TOKEN_SECRET_KEY,
+//         { expiresIn: '1d' }
+//       );
+//       return res.status(200).json({
+//         data: user,
+//         token,
+//         message: "Successfully login!",
+//         success: true,
+//         posts
+//       });
+//     }
 
     
-    return res.status(400).json({
-      message: "Invalid password!",
-      success: false
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-      success: false,
-    });
-  }
-};
+//     return res.status(400).json({
+//       message: "Invalid password!",
+//       success: false
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       message: error.message,
+//       success: false,
+//     });
+//   }
+// };
 
 
 
@@ -191,6 +191,51 @@ export const login = async (req, res) => {
 //     return res.status(500).json({ message: "Server error." });
 //   }
 // };
+
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log("📥 Received login:", email, password); // 👈 add this
+
+    const existingUser = await userModel.findOne({ email });
+    if (!existingUser) {
+      console.log("❌ User not found");
+      return res.status(400).json({
+        message: "User doesn't exist!",
+        success: false
+      });
+    }
+
+    const checkPassword = bcrypt.compareSync(password, existingUser.password);
+    console.log("🔐 Password match:", checkPassword); // 👈 add this
+
+    if (!checkPassword) {
+      return res.status(400).json({
+        message: "Invalid password!",
+        success: false
+      });
+    }
+
+    const token = jwt.sign(
+      { data: { id: existingUser._id, role: existingUser.role } },
+      process.env.TOKEN_SECRET_KEY,
+      { expiresIn: "1d" }
+    );
+
+    console.log("✅ Login success for:", existingUser.email); // 👈 add this
+
+    return res.status(200).json({
+      data: existingUser,
+      token,
+      message: "Successfully login!",
+      success: true
+    });
+  } catch (error) {
+    console.error("💥 Login error:", error);
+    res.status(500).json({ message: error.message, success: false });
+  }
+};
 
 export const forgetPassword = async (req, res) => {
   try {
