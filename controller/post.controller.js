@@ -2,7 +2,7 @@ import postModel from "../models/post.model.js"
 import { upload } from "../utils/multer.utils.js"
 import fs from "fs";
 import path from "path";
-import cloudinary from "../config/cloudinary.js";
+
 
 // export const addPost = async (req, res) => {
 //     try {
@@ -46,77 +46,33 @@ import cloudinary from "../config/cloudinary.js";
 // }
 
 
-// export const addPost = async (req, res) => {
-//     try {
-//         console.log(req.body, 'body');
-//         console.log(req.files, 'files');
-
-//         const images = req.files?.images?.[0]?.filename || null;
-//         const { title, description } = req.body;
-
-//         const PostData = await postModel.create({
-//             title,
-//             description,
-//             images,
-//             author: req.user._id
-//         });
-
-//         return res.status(201).json({
-//             data: PostData,
-//             message: "Post Added Successfully",
-//             success: true
-//         });
-//     } 
-//     catch (error) {
-//         return res.status(500).json({
-//             message: error.message,
-//             success: false
-//         });
-//     }
-// };
-
-
-
-
 export const addPost = async (req, res) => {
-  try {
-    const { title, description } = req.body;
+    try {
+        console.log(req.body, 'body');
+        console.log(req.files, 'files');
 
-    let imageUrl = null;
+        const images = req.files?.images?.[0]?.filename || null;
+        const { title, description } = req.body;
 
-    // If image exists → upload
-    if (req.file) {
-      const result = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "social-media-posts" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
+        const PostData = await postModel.create({
+            title,
+            description,
+            images,
+            author: req.user._id
+        });
 
-        stream.end(req.file.buffer);
-      });
-
-      imageUrl = result.secure_url;
+        return res.status(201).json({
+            data: PostData,
+            message: "Post Added Successfully",
+            success: true
+        });
+    } 
+    catch (error) {
+        return res.status(500).json({
+            message: error.message,
+            success: false
+        });
     }
-
-    const newPost = await postModel.create({
-      title,
-      description,
-      image: imageUrl,
-      author: req.user._id,
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Post added successfully",
-      data: newPost
-    });
-
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
 };
 
 
