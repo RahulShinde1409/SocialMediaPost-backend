@@ -29,7 +29,7 @@ const route = express.Router();
 route.post(
   '/add-post',
   auth,
-  upload.fields([{ name: 'images', maxCount: 1 }]),
+  upload.single("images"),  // <<< FIXED
   addPost
 );
 
@@ -42,5 +42,6 @@ route.delete('/delete-post/:post_id', deletePost)
 
 route.put('/approve-posts/:post_id', auth, isAdmin, approvePost)
 route.put('/reject-posts/:post_id', auth, isAdmin, rejectPost)
- 
+
 export default route;
+
