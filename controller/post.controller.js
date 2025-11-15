@@ -46,35 +46,64 @@ import path from "path";
 // }
 
 
+// export const addPost = async (req, res) => {
+//     try {
+//         console.log(req.body, 'body');
+//         console.log(req.files, 'files');
+
+//         const images = req.files?.images?.[0]?.filename || null;
+//         const { title, description } = req.body;
+
+//         const PostData = await postModel.create({
+//             title,
+//             description,
+//             images,
+//             author: req.user._id
+//         });
+
+//         return res.status(201).json({
+//             data: PostData,
+//             message: "Post Added Successfully",
+//             success: true
+//         });
+//     } 
+//     catch (error) {
+//         return res.status(500).json({
+//             message: error.message,
+//             success: false
+//         });
+//     }
+// };
+
 export const addPost = async (req, res) => {
-    try {
-        console.log(req.body, 'body');
-        console.log(req.files, 'files');
+  try {
+    console.log("BODY RECEIVED:", req.body);
 
-        const images = req.files?.images?.[0]?.filename || null;
-        const { title, description } = req.body;
+    const { title, description, image } = req.body;
 
-        const PostData = await postModel.create({
-            title,
-            description,
-            images,
-            author: req.user._id
-        });
-
-        return res.status(201).json({
-            data: PostData,
-            message: "Post Added Successfully",
-            success: true
-        });
-    } 
-    catch (error) {
-        return res.status(500).json({
-            message: error.message,
-            success: false
-        });
+    if (!title || !description) {
+      return res.status(400).json({
+        success: false,
+        message: "Title & description are required",
+      });
     }
-};
 
+    const PostData = await postModel.create({
+      title,
+      description,
+      images: image,     // <-- Cloudinary URL
+      author: req.user._id,
+    });
+
+    return res.status(201).json({
+      data: PostData,
+      success: true,
+      message: "Post Added Successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
 
 
 export const getPosts = async (req, res) => {
@@ -191,75 +220,101 @@ export const getMyPosts = async (req, res) => {
 };
 
 
+// export const updatePost = async (req, res) => {
+//     try {
+//         const MultipleFileData = upload.fields([
+//             // { name: "profile_img", maxCount: 4 },
+//             { name: "images", maxCount: 2 },
+//         ]);
+
+//         MultipleFileData(req, res, async function (err) {
+//             if (err) return res.status(400).json({ error: err.message });
+
+//             const { post_id } = req.params;
+//             const {
+//                 title, description, author
+
+//             } = req.body;
+
+//             const PostData = await postModel.findById(post_id);
+//             if (!PostData) {
+//                 return res.status(404).json({ message: "Post not found" });
+//             }
+
+
+//             // let updatedProfileImages = PostData.profile_img || [];
+//             let updatedImages = PostData.images || [];
+
+//             if (req.files && req.files["images"]) {
+
+//                 PostData.images?.forEach((oldImg) => {
+//                     const filePath = path.join("./uploads", oldImg);
+//                     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+//                 });
+
+//                 updatedImages = req.files["images"].map(
+//                     (file) => file.filename
+//                 );
+//             }
+
+//             const updateResult = await postModel.updateOne(
+//                 { _id: post_id },
+//                 {
+//                     $set: {
+//                         title,
+//                         description,
+//                         author,
+//                         // profile_img: updatedProfileImages,
+//                         images: updatedImages,
+//                     },
+//                 }
+//             );
+
+//             if (updateResult.modifiedCount > 0) {
+//                 return res.status(200).json({
+//                     message: "Updated Post Successfully",
+//                     success: true,
+//                 });
+//             }
+
+//             return res.status(400).json({
+//                 message: "Update failed or no changes made",
+//                 success: false,
+//             });
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({
+//             message: "Internal Server Error",
+//             success: false,
+//         });
+//     }
+// };
+
 export const updatePost = async (req, res) => {
-    try {
-        const MultipleFileData = upload.fields([
-            // { name: "profile_img", maxCount: 4 },
-            { name: "images", maxCount: 2 },
-        ]);
+  try {
+    const { post_id } = req.params;
+    const { title, description, image } = req.body;
 
-        MultipleFileData(req, res, async function (err) {
-            if (err) return res.status(400).json({ error: err.message });
+    const updatedPost = await postModel.findByIdAndUpdate(
+      post_id,
+      { title, description, images: image },
+      { new: true }
+    );
 
-            const { post_id } = req.params;
-            const {
-                title, description, author
-
-            } = req.body;
-
-            const PostData = await postModel.findById(post_id);
-            if (!PostData) {
-                return res.status(404).json({ message: "Post not found" });
-            }
-
-
-            // let updatedProfileImages = PostData.profile_img || [];
-            let updatedImages = PostData.images || [];
-
-            if (req.files && req.files["images"]) {
-
-                PostData.images?.forEach((oldImg) => {
-                    const filePath = path.join("./uploads", oldImg);
-                    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-                });
-
-                updatedImages = req.files["images"].map(
-                    (file) => file.filename
-                );
-            }
-
-            const updateResult = await postModel.updateOne(
-                { _id: post_id },
-                {
-                    $set: {
-                        title,
-                        description,
-                        author,
-                        // profile_img: updatedProfileImages,
-                        images: updatedImages,
-                    },
-                }
-            );
-
-            if (updateResult.modifiedCount > 0) {
-                return res.status(200).json({
-                    message: "Updated Post Successfully",
-                    success: true,
-                });
-            }
-
-            return res.status(400).json({
-                message: "Update failed or no changes made",
-                success: false,
-            });
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            message: "Internal Server Error",
-            success: false,
-        });
+    if (!updatedPost) {
+      return res.status(404).json({ success: false, message: "Post not found" });
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "Post Updated Successfully",
+      data: updatedPost,
+    });
+
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
 };
 
 
