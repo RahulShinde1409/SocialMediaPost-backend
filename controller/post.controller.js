@@ -46,64 +46,35 @@ import path from "path";
 // }
 
 
-// export const addPost = async (req, res) => {
-//     try {
-//         console.log(req.body, 'body');
-//         console.log(req.files, 'files');
-
-//         const images = req.files?.images?.[0]?.filename || null;
-//         const { title, description } = req.body;
-
-//         const PostData = await postModel.create({
-//             title,
-//             description,
-//             images,
-//             author: req.user._id
-//         });
-
-//         return res.status(201).json({
-//             data: PostData,
-//             message: "Post Added Successfully",
-//             success: true
-//         });
-//     } 
-//     catch (error) {
-//         return res.status(500).json({
-//             message: error.message,
-//             success: false
-//         });
-//     }
-// };
-
 export const addPost = async (req, res) => {
-  try {
-    console.log("BODY RECEIVED:", req.body);
+    try {
+        console.log(req.body, 'body');
+        console.log(req.files, 'files');
 
-    const { title, description, image } = req.body;
+        const images = req.files?.images?.[0]?.filename || null;
+        const { title, description } = req.body;
 
-    if (!title || !description) {
-      return res.status(400).json({
-        success: false,
-        message: "Title & description are required",
-      });
+        const PostData = await postModel.create({
+            title,
+            description,
+            images,
+            author: req.user._id
+        });
+
+        return res.status(201).json({
+            data: PostData,
+            message: "Post Added Successfully",
+            success: true
+        });
+    } 
+    catch (error) {
+        return res.status(500).json({
+            message: error.message,
+            success: false
+        });
     }
-
-    const PostData = await postModel.create({
-      title,
-      description,
-      images: image,     // <-- Cloudinary URL
-      author: req.user._id,
-    });
-
-    return res.status(201).json({
-      data: PostData,
-      success: true,
-      message: "Post Added Successfully",
-    });
-  } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
-  }
 };
+
 
 
 export const getPosts = async (req, res) => {
