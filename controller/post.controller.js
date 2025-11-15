@@ -4,46 +4,77 @@ import fs from "fs";
 import path from "path";
 
 
+// export const addPost = async (req, res) => {
+//     try {
+
+//         const addPost = upload.fields([{ name: 'images', maxCount: 1 }])
+
+//         addPost(req, res, async (err) => {
+//             if (err) return res.status(400).json({ message: err.message, success: false })
+
+//             console.log(req.body, 'body');
+//             console.log(req.files, 'files')
+
+//             // let profile_img = req.files['profile_img'] ? req.files['profile_img'][0].filename : null;
+//             let images = req.files['images'] ? req.files['images'][0].filename : null;
+//             const { title, description } = req.body;
+
+//             const PostData = await postModel.create({
+//                 title, description, images, author: req.user._id
+//             })
+
+//             if (PostData) {
+//                 return res.status(201).json({
+//                     data: PostData,
+//                     message: "Post Added Successfully",
+//                     success: true
+//                 })
+//             }
+//             return res.status(400).json({
+//                 message: "Bad Request",
+//                 success: false
+//             })
+//         })
+
+
+//     } catch (error) {
+//         return res.status(500).json({
+//             message: error.message,
+//             success: false
+//         })
+//     }
+// }
+
+
 export const addPost = async (req, res) => {
     try {
+        console.log(req.body, 'body');
+        console.log(req.files, 'files');
 
-        const addPost = upload.fields([{ name: 'images', maxCount: 1 }])
+        const images = req.files?.images?.[0]?.filename || null;
+        const { title, description } = req.body;
 
-        addPost(req, res, async (err) => {
-            if (err) return res.status(400).json({ message: err.message, success: false })
+        const PostData = await postModel.create({
+            title,
+            description,
+            images,
+            author: req.user._id
+        });
 
-            console.log(req.body, 'body');
-            console.log(req.files, 'files')
-
-            // let profile_img = req.files['profile_img'] ? req.files['profile_img'][0].filename : null;
-            let images = req.files['images'] ? req.files['images'][0].filename : null;
-            const { title, description } = req.body;
-
-            const PostData = await postModel.create({
-                title, description, images, author: req.user._id
-            })
-
-            if (PostData) {
-                return res.status(201).json({
-                    data: PostData,
-                    message: "Post Added Successfully",
-                    success: true
-                })
-            }
-            return res.status(400).json({
-                message: "Bad Request",
-                success: false
-            })
-        })
-
-
-    } catch (error) {
+        return res.status(201).json({
+            data: PostData,
+            message: "Post Added Successfully",
+            success: true
+        });
+    } 
+    catch (error) {
         return res.status(500).json({
             message: error.message,
             success: false
-        })
+        });
     }
-}
+};
+
 
 
 export const getPosts = async (req, res) => {

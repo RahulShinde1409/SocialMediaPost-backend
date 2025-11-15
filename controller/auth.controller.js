@@ -196,11 +196,11 @@ export const Register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("📥 Received login:", email, password); // 👈 add this
+    console.log("📥 Received login:", email, password); 
 
     const existingUser = await userModel.findOne({ email });
     if (!existingUser) {
-      console.log("❌ User not found");
+      console.log("User not found");
       return res.status(400).json({
         message: "User doesn't exist!",
         success: false
@@ -208,7 +208,7 @@ export const login = async (req, res) => {
     }
 
     const checkPassword = bcrypt.compareSync(password, existingUser.password);
-    console.log("🔐 Password match:", checkPassword); // 👈 add this
+    console.log("Password match:", checkPassword); 
 
     if (!checkPassword) {
       return res.status(400).json({
@@ -223,7 +223,7 @@ export const login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    console.log("✅ Login success for:", existingUser.email); // 👈 add this
+    console.log("Login success for:", existingUser.email); 
 
     return res.status(200).json({
       data: existingUser,
@@ -232,7 +232,7 @@ export const login = async (req, res) => {
       success: true
     });
   } catch (error) {
-    console.error("💥 Login error:", error);
+    console.error("Login error:", error);
     res.status(500).json({ message: error.message, success: false });
   }
 };
