@@ -235,20 +235,57 @@ export const getMyPosts = async (req, res) => {
 //     }
 // };
 
+// export const updatePost = async (req, res) => {
+//   try {
+//     const { post_id } = req.params;
+//     const { title, description, image } = req.body;
+
+//     const updatedPost = await postModel.findByIdAndUpdate(
+//       post_id,
+//       { title, description, images: image },
+//       { new: true }
+//     );
+
+//     if (!updatedPost) {
+//       return res.status(404).json({ success: false, message: "Post not found" });
+//     }
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Post Updated Successfully",
+//       data: updatedPost,
+//     });
+
+//   } catch (err) {
+//     return res.status(500).json({ success: false, message: err.message });
+//   }
+// };
+
+
+
 export const updatePost = async (req, res) => {
   try {
     const { post_id } = req.params;
-    const { title, description, image } = req.body;
+    const { title, description } = req.body;
+
+    // Find post first
+    const post = await postModel.findById(post_id);
+    if (!post) {
+      return res.status(404).json({ success: false, message: "Post not found" });
+    }
+
+    let images = post.images; // keep existing images
+
+    // If user uploads NEW image
+    if (req.file) {
+      images = req.file.filename; // replace old image
+    }
 
     const updatedPost = await postModel.findByIdAndUpdate(
       post_id,
-      { title, description, images: image },
+      { title, description, images },
       { new: true }
     );
-
-    if (!updatedPost) {
-      return res.status(404).json({ success: false, message: "Post not found" });
-    }
 
     return res.status(200).json({
       success: true,
@@ -260,6 +297,7 @@ export const updatePost = async (req, res) => {
     return res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 
 
