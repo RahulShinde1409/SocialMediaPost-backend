@@ -10,7 +10,7 @@ route.get('/getall-posts',getAllPosts)
 route.get('/get-post/:post_id',getPost)
 route.get('/get-myposts',auth,getMyPosts)
 // route.put('/update-post/:post_id',updatePost)
-router.put("/update-post/:post_id", upload.single("image"), updatePost);
+route.put("/update-post/:post_id", upload.single("image"), updatePost);
 
 route.delete('/delete-post/:post_id',deletePost)
 
