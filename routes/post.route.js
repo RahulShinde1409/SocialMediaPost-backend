@@ -9,9 +9,7 @@ route.get('/get-posts', getPosts)
 route.get('/getall-posts',getAllPosts)
 route.get('/get-post/:post_id',getPost)
 route.get('/get-myposts',auth,getMyPosts)
-// route.put('/update-post/:post_id',updatePost)
-route.put("/update-post/:post_id", upload.single("image"), updatePost);
-
+route.put('/update-post/:post_id',updatePost)
 route.delete('/delete-post/:post_id',deletePost)
 
 route.put('/approve-posts/:post_id',auth,isAdmin,approvePost)
