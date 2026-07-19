@@ -16,7 +16,10 @@ export const addPost = async (req, res) => {
             console.log(req.files, 'files')
 
             // let profile_img = req.files['profile_img'] ? req.files['profile_img'][0].filename : null;
-            let images = req.files['images'] ? req.files['images'][0].filename : null;
+            // let images = req.files['images'] ? req.files['images'][0].filename : null;
+            let images = req.files["images"]
+    ? req.files["images"][0].path
+    : null;
             const { title, description } = req.body;
 
             const PostData = await postModel.create({
