@@ -23,7 +23,7 @@ app.use(express.json());
 app.use("/static", express.static("uploads"));
 
 
-
+console.log("Mongo URL exists:", !!process.env.MONGO_DB_URL);
 mongoose
   .connect(process.env.MONGO_DB_URL)
   .then(() => console.log("MongoDB connected"))
