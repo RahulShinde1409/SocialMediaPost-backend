@@ -269,8 +269,9 @@
     "nodemon": "^3.1.10"
   },
   "scripts": {
-    "server": "nodemon --exec babel-node index.js"
-  },
+  "start": "node index.js",
+  "dev": "nodemon --exec babel-node index.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
