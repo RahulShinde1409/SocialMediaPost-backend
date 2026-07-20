@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import userModel from "../models/user.model.js";
 import postModel from '../models/post.model.js';
-// import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 
 export const Register = async (req, res) => {
   try {
@@ -359,33 +359,79 @@ export const forgetPassword = async (req, res) => {
   }
 };
 
+// export const resetPassword = async (req, res) => {
+//   try {
+//     const { token, newPassword } = req.body;
+
+//     if (!token || !newPassword) {
+//       return res.status(400).json({ message: "Token and new password are required" });
+//     }
+
+    
+//     const decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+
+    
+//     const user = await userModel.findById(decoded.id);
+//     if (!user) {
+//       return res.status(404).json({ message: "User doesn't exist" });
+//     }
+
+    
+//     const hashedPassword = await bcrypt.hash(newPassword, Number(process.env.PASSWORD_SALT));
+
+//     user.password = hashedPassword;
+//     await user.save();
+
+//     return res.status(200).json({ message: "Password reset successful" });
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message || "Server error" });
+//   }
+// };
+
+
+
 export const resetPassword = async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
+    const { token } = req.params;
+    const { newPassword } = req.body;
 
     if (!token || !newPassword) {
-      return res.status(400).json({ message: "Token and new password are required" });
+      return res.status(400).json({
+        message: "Token and new password are required",
+      });
     }
 
-    
-    const decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+    const decoded = jwt.verify(
+      token,
+      process.env.TOKEN_SECRET_KEY
+    );
 
-    
     const user = await userModel.findById(decoded.id);
+
     if (!user) {
-      return res.status(404).json({ message: "User doesn't exist" });
+      return res.status(404).json({
+        message: "User doesn't exist",
+      });
     }
 
-    
-    const hashedPassword = await bcrypt.hash(newPassword, Number(process.env.PASSWORD_SALT));
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      Number(process.env.PASSWORD_SALT)
+    );
 
     user.password = hashedPassword;
+
     await user.save();
 
-    return res.status(200).json({ message: "Password reset successful" });
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+    });
+
   } catch (error) {
-    return res.status(500).json({ message: error.message || "Server error" });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
-
-

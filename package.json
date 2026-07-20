@@ -162,6 +162,7 @@
     "node-environment-flags": "^1.0.6",
     "node-gyp-build": "^4.8.4",
     "node-releases": "^2.0.19",
+    "nodemailer": "^9.0.3",
     "normalize-path": "^3.0.0",
     "object-assign": "^4.1.1",
     "object-inspect": "^1.13.4",
