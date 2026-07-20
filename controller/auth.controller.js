@@ -425,9 +425,7 @@ export const forgetPassword = async (req, res) => {
     const token = jwt.sign(
       { id: user._id },
       process.env.TOKEN_SECRET_KEY,
-      {
-        expiresIn: "15m",
-      }
+      { expiresIn: "15m" }
     );
 
     const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
@@ -435,21 +433,17 @@ export const forgetPassword = async (req, res) => {
     await sendEmail({
       email: user.email,
       subject: "Reset Password",
-      message: `Click the link below to reset your password:
-
-${resetLink}
-
-This link expires in 15 minutes.`,
+      message: resetLink,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Reset link sent successfully",
     });
   } catch (error) {
     console.log(error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
