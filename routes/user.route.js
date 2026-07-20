@@ -19,7 +19,6 @@ route.delete('/delete-user/:user_id', deleteUser)
 route.post('/login',login);
 route.post('/register',Register)
 route.post('/forget-password', forgetPassword);
-route.post('/reset-password/:token', resetPassword);
-// route.post('/reset-password',resetPassword);
+route.post('/reset-password/:id', resetPassword);
 
 export default route
