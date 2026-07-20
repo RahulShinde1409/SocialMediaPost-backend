@@ -16,7 +16,8 @@ const sendEmail = async (options) => {
     text: options.message,
   });
 
-  console.log(info);
+  console.log("SMTP Response:", info.response);
+  return info;
 };
 
 export default sendEmail;
