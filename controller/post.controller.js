@@ -3,7 +3,7 @@ import { upload } from "../utils/multer.utils.js"
 import fs from "fs";
 import path from "path";
 
-import cloudinary from "../utils/cloudinary.js";
+import cloudinary from "../utils/cloudinary.utils.js";
 import streamifier from "streamifier";
 
 
