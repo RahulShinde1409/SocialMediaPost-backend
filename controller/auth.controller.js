@@ -360,192 +360,84 @@ export const login = async (req, res) => {
 //   }
 // };
 
-// export const resetPassword = async (req, res) => {
-//   try {
-//     const { token, newPassword } = req.body;
 
-//     if (!token || !newPassword) {
-//       return res.status(400).json({ message: "Token and new password are required" });
-//     }
+export const forgetPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
 
-    
-//     const decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+    const user = await userModel.findOne({ email });
 
-    
-//     const user = await userModel.findById(decoded.id);
-//     if (!user) {
-//       return res.status(404).json({ message: "User doesn't exist" });
-//     }
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
-    
-//     const hashedPassword = await bcrypt.hash(newPassword, Number(process.env.PASSWORD_SALT));
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.TOKEN_SECRET_KEY,
+      { expiresIn: "15m" }
+    );
 
-//     user.password = hashedPassword;
-//     await user.save();
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
-//     return res.status(200).json({ message: "Password reset successful" });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message || "Server error" });
-//   }
-// };
-
-
-
-// export const forgotPassword = async (req,res)=>{
-
-// try{
-
-// const {email}=req.body;
-
-// const user = await User.findOne({email});
-
-// if(!user){
-//  return res.status(404).json({
-//    message:"User not found"
-//  });
-// }
-
-
-// // create reset link
-// const resetURL = `http://localhost:5173/reset-password/${user._id}`;
-
-
-// await sendEmail({
-//  email: user.email,
-//  subject:"Password Reset Link",
-//  message:`Click this link to reset your password: ${resetURL}`
-// });
-
-
-// res.status(200).json({
-//  message:"Reset link sent to your email"
-// });
-
-
-// }catch(error){
-
-// console.log(error);
-
-// res.status(500).json({
-//  message:error.message
-// });
-
-// }
-
-// };
-
-
-// export const forgetPassword = async(req,res)=>{
-
-// try{
-
-// const {email}=req.body;
-
-
-// // check user
-// const user = await User.findOne({email});
-
-
-// if(!user){
-//     return res.status(404).json({
-//         message:"User not found"
-//     });
-// }
-
-
-// // reset link
-// const resetLink = `http://localhost:5173/reset-password/${user._id}`;
-
-
-// // send email
-// await sendEmail({
-//     email:user.email,
-//     subject:"Password Reset Request",
-//     message:`Click this link to reset your password: ${resetLink}`
-// });
-
-
-// res.status(200).json({
-//     message:"Reset link sent successfully"
-// });
-
-
-// }catch(error){
-
-// console.log(error);
-
-// res.status(500).json({
-//     message:error.message
-// });
-
-// }
-
-
-// };
-
-
-export const forgetPassword = async(req,res)=>{
-console.log("===== FORGET PASSWORD CALLED =====");
-  console.log(req.body);
-try{
-
-const {email}=req.body;
-
-if(!email){
-    return res.status(400).json({
-        message:"Email is required"
+    await sendEmail({
+      email: user.email,
+      subject: "Reset Password",
+      message: `Click here to reset your password:\n\n${resetLink}`,
     });
-}
 
-
-// find user
-const user = await userModel.findOne({email});
-
-
-if(!user){
-    return res.status(404).json({
-        message:"User not found"
+    return res.status(200).json({
+      success: true,
+      message: "Reset link sent successfully",
     });
-}
+  } catch (error) {
+    console.log(error);
 
-
-// reset link
-// const resetLink = `https://social-media-post-frontend.vercel.app/reset-password/${user._id}`;
-const token = jwt.sign(
-  { id: user._id },
-  process.env.TOKEN_SECRET_KEY,
-  { expiresIn: "15m" }
-);
-
-const resetLink =
-`https://social-media-post-frontend.vercel.app/reset-password/${token}`;
-
-// send email
-await sendEmail({
-    email:user.email,
-    subject:"Password Reset Request",
-    message:`Click this link to reset your password: ${resetLink}`
-});
-
-
-return res.status(200).json({
-    success:true,
-    message:"Reset link sent successfully"
-});
-
-
-}catch(error){
-
-console.log("Forgot Password Error:",error);
-
-return res.status(500).json({
-    success:false,
-    message:error.message
-});
-
-}
-
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
+
+
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: "Token and new password are required" });
+    }
+
+    
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+
+    
+    const user = await userModel.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({ message: "User doesn't exist" });
+    }
+
+    
+    const hashedPassword = await bcrypt.hash(newPassword, Number(process.env.PASSWORD_SALT));
+
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message || "Server error" });
+  };
+
+
+
+
+
+
+
+
+
 
 export const resetPassword = async (req, res) => {
   try {
