@@ -10,15 +10,15 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-
-await transporter.sendMail({
-
-    from:process.env.EMAIL_USER,
-    to:options.email,
-    subject:options.subject,
-    text:options.message
-
+console.log("Sending email to:", options.email);
+const info = await transporter.sendMail({
+  from: process.env.EMAIL_USER,
+  to: options.email,
+  subject: options.subject,
+  text: options.message,
 });
+
+console.log(info);
 
 };
 

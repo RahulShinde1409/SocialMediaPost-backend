@@ -510,8 +510,14 @@ if(!user){
 
 // reset link
 // const resetLink = `https://social-media-post-frontend.vercel.app/reset-password/${user._id}`;
-const resetLink = 
-`https://social-media-post-frontend.vercel.app/reset-password/${user._id}`;
+const token = jwt.sign(
+  { id: user._id },
+  process.env.TOKEN_SECRET_KEY,
+  { expiresIn: "15m" }
+);
+
+const resetLink =
+`https://social-media-post-frontend.vercel.app/reset-password/${token}`;
 
 // send email
 await sendEmail({
