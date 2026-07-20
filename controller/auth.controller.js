@@ -485,7 +485,8 @@ export const login = async (req, res) => {
 
 
 export const forgetPassword = async(req,res)=>{
-
+console.log("===== FORGET PASSWORD CALLED =====");
+  console.log(req.body);
 try{
 
 const {email}=req.body;
