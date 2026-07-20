@@ -9,6 +9,9 @@ const sendEmail = async (options) => {
     },
   });
 
+  await transporter.verify();
+  console.log("SMTP LOGIN SUCCESS");
+
   const info = await transporter.sendMail({
     from: process.env.EMAIL_USER,
     to: options.email,
@@ -16,7 +19,8 @@ const sendEmail = async (options) => {
     text: options.message,
   });
 
-  console.log("SMTP Response:", info.response);
+  console.log("SMTP RESPONSE:", info.response);
+
   return info;
 };
 
