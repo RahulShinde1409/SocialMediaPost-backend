@@ -262,25 +262,42 @@ export const updatePost = async (req, res) => {
                 );
             }
 
-            const updateResult = await postModel.updateOne(
-                { _id: post_id },
-                {
-                    $set: {
-                        title,
-                        description,
-                        author,
-                        // profile_img: updatedProfileImages,
-                        images: updatedImages,
-                    },
-                }
-            );
+            // const updateResult = await postModel.updateOne(
+            //     { _id: post_id },
+            //     {
+            //         $set: {
+            //             title,
+            //             description,
+            //             author,
+            //             // profile_img: updatedProfileImages,
+            //             images: updatedImages,
+            //         },
+            //     }
+            // );
 
-            if (updateResult.modifiedCount > 0) {
-                return res.status(200).json({
-                    message: "Updated Post Successfully",
-                    success: true,
-                });
-            }
+            // if (updateResult.modifiedCount > 0) {
+            //     return res.status(200).json({
+            //         message: "Updated Post Successfully",
+            //         success: true,
+            //     });
+            // }
+
+            const updatedPost = await postModel.findByIdAndUpdate(
+    post_id,
+    {
+        title,
+        description,
+        author,
+        images: updatedImages,
+    },
+    { new: true }
+);
+
+return res.status(200).json({
+    success: true,
+    message: "Updated Post Successfully",
+    data: updatedPost,
+});
 
             return res.status(400).json({
                 message: "Update failed or no changes made",
