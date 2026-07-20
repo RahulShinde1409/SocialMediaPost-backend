@@ -435,15 +435,70 @@ export const login = async (req, res) => {
 // };
 
 
+// export const forgetPassword = async(req,res)=>{
+
+// try{
+
+// const {email}=req.body;
+
+
+// // check user
+// const user = await User.findOne({email});
+
+
+// if(!user){
+//     return res.status(404).json({
+//         message:"User not found"
+//     });
+// }
+
+
+// // reset link
+// const resetLink = `http://localhost:5173/reset-password/${user._id}`;
+
+
+// // send email
+// await sendEmail({
+//     email:user.email,
+//     subject:"Password Reset Request",
+//     message:`Click this link to reset your password: ${resetLink}`
+// });
+
+
+// res.status(200).json({
+//     message:"Reset link sent successfully"
+// });
+
+
+// }catch(error){
+
+// console.log(error);
+
+// res.status(500).json({
+//     message:error.message
+// });
+
+// }
+
+
+// };
+
+
 export const forgetPassword = async(req,res)=>{
 
 try{
 
 const {email}=req.body;
 
+if(!email){
+    return res.status(400).json({
+        message:"Email is required"
+    });
+}
 
-// check user
-const user = await User.findOne({email});
+
+// find user
+const user = await userModel.findOne({email});
 
 
 if(!user){
@@ -454,8 +509,9 @@ if(!user){
 
 
 // reset link
-const resetLink = `http://localhost:5173/reset-password/${user._id}`;
-
+// const resetLink = `https://social-media-post-frontend.vercel.app/reset-password/${user._id}`;
+const resetLink = 
+`https://social-media-post-frontend.vercel.app/reset-password/${user._id}`;
 
 // send email
 await sendEmail({
@@ -465,16 +521,18 @@ await sendEmail({
 });
 
 
-res.status(200).json({
+return res.status(200).json({
+    success:true,
     message:"Reset link sent successfully"
 });
 
 
 }catch(error){
 
-console.log(error);
+console.log("Forgot Password Error:",error);
 
-res.status(500).json({
+return res.status(500).json({
+    success:false,
     message:error.message
 });
 
