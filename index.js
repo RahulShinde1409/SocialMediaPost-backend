@@ -34,6 +34,9 @@ mongoose
 app.use("/api/v1", userRoute);
 app.use("/api/v1", postRoute);
 app.get("/", (req, res) => res.send("Server is running"));
+app.get("/test", (req, res) => {
+  res.send("Backend Version 1");
+});
 
 
 export default app;
