@@ -1,5 +1,6 @@
 import postModel from "../models/post.model.js"
 import { upload } from "../utils/multer.utils.js"
+import Notification from "../models/notification.model.js";
 import fs from "fs";
 import path from "path";
 
@@ -92,6 +93,12 @@ export const addPost = async (req, res) => {
         images: imageUrl,
         author: req.user._id,
       });
+      await Notification.create({
+  title: "New Post",
+  message: `${req.user.name} created a new post`,
+  postId: PostData._id,
+  userId: req.user._id,
+});
 
       return res.status(201).json({
         success: true,
